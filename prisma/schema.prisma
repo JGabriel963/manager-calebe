@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Person {
+  id          String       @id @default(cuid())
+  name        String
+  email       String?      @unique
+
+  checkins Checkin[]
+
+  createdAt   DateTime     @default(now())
+
+  @@map("persons")
+}
+
+model Checkin {
+  id        String   @id @default(cuid())
+  personId  String
+
+  score     Int      @default(1)
+
+  checkedAt DateTime @default(now())
+
+  person    Person   @relation(fields: [personId], references: [id])
+
+  @@unique([personId, checkedAt])
+
+  @@map("checkins")
+}
