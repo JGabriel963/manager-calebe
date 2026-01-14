@@ -8,28 +8,55 @@ datasource db {
 }
 
 model Person {
-  id          String       @id @default(cuid())
-  name        String
-  email       String?      @unique
+  id        String   @id @default(cuid())
+  name      String
+  email     String?  @unique
+  phone     String?
+  address   String?
 
-  checkins Checkin[]
+  checkins  Checkin[]
+  points    PointTransaction[]
 
-  createdAt   DateTime     @default(now())
+  createdAt DateTime @default(now())
 
   @@map("persons")
 }
 
+
 model Checkin {
   id        String   @id @default(cuid())
   personId  String
-
-  score     Int      @default(1)
-
   checkedAt DateTime @default(now())
 
   person    Person   @relation(fields: [personId], references: [id])
+  points    PointTransaction?
 
   @@unique([personId, checkedAt])
-
   @@map("checkins")
 }
+
+
+enum PointType {
+  CHECKIN
+  MANUAL
+  BONUS
+  PENALTY
+}
+
+model PointTransaction {
+  id        String   @id @default(cuid())
+  personId  String
+  checkinId String?  @unique
+
+  points    Int
+  reason    String?
+  type      PointType @default(MANUAL)
+
+  createdAt DateTime @default(now())
+
+  person    Person   @relation(fields: [personId], references: [id])
+  checkin   Checkin? @relation(fields: [checkinId], references: [id], onDelete: Cascade)
+
+  @@map("point_transactions")
+}
+
