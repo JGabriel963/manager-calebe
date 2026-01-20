@@ -10,50 +10,75 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Button } from "@/components/ui/button";
-import { CalendarDaysIcon } from "lucide-react";
+import {
+  CalendarDaysIcon,
+  EllipsisIcon,
+  Trash2Icon,
+  TrashIcon,
+} from "lucide-react";
 import { AddPoints } from "./add-points";
 import { useState } from "react";
+import { DeleteParticipantModal } from "./delete-participant-modal";
 
 export const ParticipantList = () => {
   const { data, isPending } = useQueryParticipants();
+  const [openDelete, setOpenDelete] = useState(false);
+  const [participantId, setParticipantId] = useState("");
 
   return (
-    <div className="space-y-2 px-5">
-      {isPending && (
-        <div className="flex items-center justify-center gap-2 ">
-          <Spinner />
-          <span>Carregando...</span>
-        </div>
-      )}
+    <>
+      <div className="space-y-2 px-5">
+        {isPending && (
+          <div className="flex items-center justify-center gap-2 ">
+            <Spinner />
+            <span>Carregando...</span>
+          </div>
+        )}
 
-      {!isPending &&
-        data &&
-        data.map((participant) => {
-          const totalPoints = participant.points.reduce(
-            (acc, point) => acc + point.points,
-            0
-          );
+        {!isPending &&
+          data &&
+          data.map((participant) => {
+            const totalPoints = participant.points.reduce(
+              (acc, point) => acc + point.points,
+              0,
+            );
 
-          const totalCheckedIn = participant.checkins.length ?? 0;
+            const totalCheckedIn = participant.checkins.length ?? 0;
 
-          return (
-            <Item size="sm" variant="outline" key={`${participant.id}-list`}>
-              <ItemContent>
-                <ItemTitle>{participant.name}</ItemTitle>
-                <ItemDescription>{participant.phone}</ItemDescription>
-              </ItemContent>
-              <ItemActions>
-                <div className="flex flex-col items-center">
-                  <span className="text-sm font-bold">{totalPoints} pts</span>
-                  <span className="text-xs text-muted-foreground">
-                    {totalCheckedIn} presenças
-                  </span>
-                </div>
-              </ItemActions>
-            </Item>
-          );
-        })}
-    </div>
+            return (
+              <Item size="sm" variant="outline" key={`${participant.id}-list`}>
+                <ItemContent>
+                  <ItemTitle>{participant.name}</ItemTitle>
+                  <ItemDescription>{participant.phone}</ItemDescription>
+                </ItemContent>
+                <ItemActions>
+                  <div className="flex flex-col items-center">
+                    <span className="text-sm font-bold">{totalPoints} pts</span>
+                    <span className="text-xs text-muted-foreground">
+                      {totalCheckedIn} presenças
+                    </span>
+                  </div>
+                </ItemActions>
+                <ItemActions>
+                  <Trash2Icon
+                    className=" cursor-pointer text-red-500"
+                    onClick={() => {
+                      setParticipantId(participant.id);
+                      setOpenDelete(true);
+                    }}
+                  />
+                </ItemActions>
+              </Item>
+            );
+          })}
+      </div>
+
+      <DeleteParticipantModal
+        participantId={participantId}
+        open={openDelete}
+        onOpenChange={setOpenDelete}
+      />
+    </>
   );
 };
 
@@ -77,7 +102,7 @@ export const ParticipantsCheckins = () => {
           data.map((participant) => {
             const totalPoints = participant.points.reduce(
               (acc, point) => acc + point.points,
-              0
+              0,
             );
 
             const totalCheckedIn = participant.checkins.length ?? 0;

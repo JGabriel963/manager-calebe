@@ -30,7 +30,6 @@ interface AddParticipantProps {
 
 const createParticipantSchema = z.object({
   name: z.string().min(1, "Campo obrigatório"),
-  email: z.string().optional(),
   phone: z.string().optional(),
   address: z.string().optional(),
 });
@@ -49,14 +48,14 @@ const formatPhoneNumber = (value: string): string => {
   } else if (numbers.length <= 11) {
     return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(
       7,
-      11
+      11,
     )}`;
   }
 
   // Limita a 11 dígitos
   return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(
     7,
-    11
+    11,
   )}`;
 };
 
@@ -106,17 +105,7 @@ export const AddParticipant = ({
               />
               <FieldError>{form.formState.errors.name?.message}</FieldError>
             </Field>
-            <Field>
-              <FieldLabel htmlFor="email">E-mail</FieldLabel>
-              <Input
-                id="email"
-                disabled={isLoading}
-                autoComplete="off"
-                placeholder="Digite o e-mail"
-                {...form.register("email")}
-              />
-              <FieldError>{form.formState.errors.email?.message}</FieldError>
-            </Field>
+
             <Field>
               <FieldLabel htmlFor="phone">Telefone</FieldLabel>
               <Input

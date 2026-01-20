@@ -21,7 +21,7 @@ export const participantsRouter = createTRPCRouter({
         email: z.string().optional(),
         phone: z.string().optional(),
         address: z.string().optional(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       return await prisma.person.create({
@@ -33,11 +33,24 @@ export const participantsRouter = createTRPCRouter({
         },
       });
     }),
+  delete: baseProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      return await prisma.person.delete({
+        where: {
+          id: input.id,
+        },
+      });
+    }),
   getOne: baseProcedure
     .input(
       z.object({
         id: z.string(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       return await prisma.person.findUnique({
@@ -56,7 +69,7 @@ export const participantsRouter = createTRPCRouter({
         id: z.string(),
         points: z.number(),
         date: z.date(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       return await prisma.checkin.create({
@@ -77,7 +90,7 @@ export const participantsRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       return await prisma.checkin.delete({
