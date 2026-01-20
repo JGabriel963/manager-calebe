@@ -25,7 +25,7 @@ interface AddParticipantProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
+// Fix
 const times = [
   {
     label: "Domingo",
